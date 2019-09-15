@@ -20,7 +20,8 @@ PASSES = 20
 # 학습을 수행할 병렬 워커 수
 WORKERS = 4
 #환경에 따라 변경 필요
-model_path = os.getcwd() + "\\output\\soojle_lda_model"
+model_path = os.getcwd() + "\\lda_output\\soojle_lda_model"
+dict_path = os.getcwd() + "\\lda_output\\soojle_lda_dict"
 
 def learn(col, start = 0, count = None, split_doc = 1, update = False):
 	corpus = []
@@ -106,7 +107,7 @@ def get_posts_df(coll, start, count, update = False):
 
 def save_model(ldamodel, dictionary):
 	ldamodel.save(datepath(model_path))
-	dictionary.save(model_path)
+	dictionary.save(dict_path)
 	print("model saved")
 
 ############################################
