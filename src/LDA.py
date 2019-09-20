@@ -4,19 +4,23 @@ import os
 import numpy as np
 import pandas as pd
 import gensim
+import sys
+sys.path.insert(0,'/home/iml/SOOJLE/')
+sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
+sys.path.insert(0,'/home/iml/SJ_Auth')
+sys.path.insert(0,'/home/iml/SJ_AI/src')
+sys.path.insert(0,'/home/iml/IML_Tokenizer/src/')
+sys.path.insert(0,'../../IML_Tokenizer/src/')
+
 from gensim.test.utils import datapath
 from gensim import corpora
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis.gensim
 import warnings
-from tknizer.tknizer import get_tk
-import sys
-sys.path.insert(0,'/home/iml/SOOJLE/')
-sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
-sys.path.insert(0,'/home/iml/SJ_Auth')
-sys.path.insert(0,'/home/iml/SJ_AI/src')
-sys.path.insert(0,'/home/iml/IML_Toknizer/src/')
+from tknizer import get_tk
+import platform
+
 warnings.filterwarnings('ignore')
 # HyperParameter
 #총 토픽 수
@@ -26,8 +30,13 @@ PASSES = 20
 # 학습을 수행할 병렬 워커 수
 WORKERS = 4
 #환경에 따라 변경 필요
-model_path = os.getcwd() + "\\lda_output\\soojle_lda_model"
-dict_path = os.getcwd() + "\\lda_output\\soojle_lda_dict"
+os_platform = platform.platform()
+if os_platform.startswith("Windows"):
+	model_path = os.getcwd() + "\\lda_output\\soojle_lda_model"
+	dict_path = os.getcwd() + "\\lda_output\\soojle_lda_dict"
+else:
+	model_path = "/home/iml/model/lda_output/soojle_lda_model"
+	dict_path = "/home/iml/model/lda_output/soojle_lda_dict"
 
 def learn(col, start = 0, count = None, split_doc = 1, update = False):
 	corpus = []
@@ -58,8 +67,6 @@ def learn(col, start = 0, count = None, split_doc = 1, update = False):
 				passes = PASSES,
 				workers = WORKERS
 				)
-	save_model(ldamodel, dictionary)
-	print("Model saved.")
 	cm = CoherenceModel(model=model, corpus=corpus, coherence='u_mass')
 	coherence = cm.get_coherence()
 	print("Cpherence",coherence)
@@ -88,8 +95,6 @@ def csv_learn(file):
 				passes = PASSES,
 				workers = WORKERS
 				)
-	save_model(ldamodel, dictionary)
-	print("Model saved.")
 	cm = CoherenceModel(model=model, corpus=corpus, coherence='u_mass')
 	coherence = cm.get_coherence()
 	print("Cpherence",coherence)
@@ -111,7 +116,7 @@ def get_posts_df(coll, start, count, update = False):
 		print("title:",post['title'])
 	return df
 
-def save_model(ldamodel, dictionary):
+def save_model(ldamodel, dictionary, model_path = model_path, dict_path = dict_path):
 	ldamodel.save(datepath(model_path))
 	dictionary.save(dict_path)
 	print("model saved")

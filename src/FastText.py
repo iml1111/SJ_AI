@@ -1,21 +1,25 @@
-from gensim.models.fasttext import load_facebook_model
-from gensim.test.utils import datapath
-import os
 import sys
 sys.path.insert(0,'/home/iml/SOOJLE/')
 sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
 sys.path.insert(0,'/home/iml/SJ_Auth')
 sys.path.insert(0,'/home/iml/SJ_AI/src')
 sys.path.insert(0,'/home/iml/IML_Toknizer/src/')
+sys.path.insert(0,'../../IML_Toknizer/src/')
 
-def test_load_wiki_model():
-	print("FastText Wiki Model Loading...")
-	cap_path = datapath(os.getcwd() + "\\ft_wiki\\cc.ko.300.bin.gz")
-	return load_facebook_model(cap_path)
+from gensim.models.fasttext import load_facebook_model
+from gensim.test.utils import datapath
+import os
+import platform
 
-def load_wiki_model():
+os_platform = platform.platform()
+if os_platform.startswith("Windows"):
+	fbmodel_path = os.getcwd() + "\\ft_wiki\\cc.ko.300.bin.gz"
+else:
+	fbmodel_path  = "/home/iml/model/fb_model/cc.ko.300.bin.gz"
+
+def load_wiki_model(model_path = fbmodel_path):
 	print("FastText Wiki Model Loading...")
-	cap_path = datapath("\\home\\iml\\ft_wiki\\cc.ko.300.bin.gz")
+	cap_path = datapath(fbmodel_path)
 	return load_facebook_model(cap_path)
 
 
