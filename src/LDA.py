@@ -10,7 +10,13 @@ from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis.gensim
 import warnings
-from tknizer.tknizer import get_tk 
+from tknizer.tknizer import get_tk
+import sys
+sys.path.insert(0,'/home/iml/SOOJLE/')
+sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
+sys.path.insert(0,'/home/iml/SJ_Auth')
+sys.path.insert(0,'/home/iml/SJ_AI/src')
+sys.path.insert(0,'/home/iml/IML_Toknizer/src/')
 warnings.filterwarnings('ignore')
 # HyperParameter
 #총 토픽 수
