@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import gensim
 import sys
+sys.path.insert(0,'/home/iml/')
 sys.path.insert(0,'/home/iml/SOOJLE/')
 sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
 sys.path.insert(0,'/home/iml/SJ_Auth')
@@ -29,6 +30,8 @@ NUM_TOPICS = 10
 PASSES = 20
 # 학습을 수행할 병렬 워커 수
 WORKERS = 4
+# 학습에 포함될 최소 글자수
+POST_LIMIT = 15
 #환경에 따라 변경 필요
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
@@ -41,7 +44,7 @@ else:
 def learn(col, start = 0, count = None, split_doc = 1, update = False):
 	corpus = []
 	dictionary = corpora.Dictionary()
-	idx = 1
+	idx = 1 + start
 	if count is None:
 		NUM_DOCS = col.count()
 	else:
@@ -71,7 +74,7 @@ def learn(col, start = 0, count = None, split_doc = 1, update = False):
 	coherence = cm.get_coherence()
 	print("Cpherence",coherence)
 	print('\nPerplexity: ', model.log_perplexity(corpus))
-	return ldamodel, dictionary, coherence, model.log_perplexity(corpus)
+	return ldamodel, dictionary, coherence, model.log_perplexity(corpus), corpus
 	#perplex가 낮을수록, coherence가 높을수록 좋음
 	#https://coredottoday.github.io/2018/09/17/%EB%AA%A8%EB%8D%B8-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0-%ED%8A%9C%EB%8B%9D/
 
@@ -102,18 +105,19 @@ def csv_learn(file):
 	return ldamodel, dictionary, coherence, model.log_perplexity(corpus)
 
 def get_posts_df(coll, start, count, update = False):
-	if update:
-		posts = coll.find({{"learn" : 0}}).skip(start).limit(count)
-	else:
-		posts = coll.find().skip(start).limit(count)
+	# if update:
+	# 	posts = coll.find({{"learn" : 0}}).skip(start).limit(count)
+	# else:
+	# 	posts = coll.find().skip(start).limit(count)
+	posts = coll.find().skip(start).limit(count)
 	df = pd.DataFrame(columns = ["text"])
 	for post in posts:
-		if len(post['post']) < 20:
+		if len(post['post'] + post['title']) < POST_LIMIT:
 			continue
-		token = post['token']
+		token = post['token'] + post['tag']
 		temp = pd.DataFrame({"text":[token]})
 		df = df.append(temp, ignore_index = True)
-		print("title:",post['title'])
+		print("OK")
 	return df
 
 def save_model(ldamodel, dictionary, model_path = model_path, dict_path = dict_path):

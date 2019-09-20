@@ -1,4 +1,5 @@
 import sys
+sys.path.insert(0,'/home/iml/')
 sys.path.insert(0,'/home/iml/SOOJLE/')
 sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
 sys.path.insert(0,'/home/iml/SJ_Auth')
