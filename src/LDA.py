@@ -19,7 +19,7 @@ from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis.gensim
 import warnings
-from tknizer import get_tk
+#from tknizer import get_tk
 import platform
 
 warnings.filterwarnings('ignore')
