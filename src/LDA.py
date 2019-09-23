@@ -19,17 +19,17 @@ from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis.gensim
 import warnings
-#from tknizer import get_tk
+from tknizer import get_tk
 import platform
 
 warnings.filterwarnings('ignore')
 # HyperParameter
 #총 토픽 수
-NUM_TOPICS = 7
+NUM_TOPICS = 45
 # 많을수록 곱씹어서 봄
 PASSES = 20
 # 학습에 포함될 최소 글자수
-POST_LIMIT = 15
+POST_LIMIT = 20
 # 학습을 수행할 병렬 워커 수
 WORKERS = 4
 
@@ -68,11 +68,11 @@ def make_corpus(col, start = 0, count = None, split_doc = 1, update = False):
 
 
 ## 코퍼스를 통해 학습 수행
-def learn(corpus, dictionary, update = False):
+def learn(corpus, dictionary, num_topics = NUM_TOPICS, update = False):
 	print("Training...")
 	ldamodel = LdaMulticore(
 				corpus,
-				num_topics = NUM_TOPICS,
+				num_topics = num_topics,
 				id2word = dictionary,
 				passes = PASSES,
 				workers = WORKERS
