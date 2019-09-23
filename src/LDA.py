@@ -29,7 +29,7 @@ NUM_TOPICS = 45
 # 많을수록 곱씹어서 봄
 PASSES = 20
 # 학습에 포함될 최소 글자수
-POST_LIMIT = 20
+EVERY_POST_LIMIT = 30
 # 학습을 수행할 병렬 워커 수
 WORKERS = 4
 
@@ -95,7 +95,7 @@ def get_posts_df(coll, start, count, update = False):
 		posts = coll.find().skip(start).limit(count)
 	df = pd.DataFrame(columns = ["text"])
 	for post in posts:
-		if len(post['post'] + post['title']) < POST_LIMIT:
+		if post['info'].startswith("everytime") and len(post['post']) < EVERY_POST_LIMIT:
 			continue
 		token = post['token'] + post['tag']
 		temp = pd.DataFrame({"text":[token]})
