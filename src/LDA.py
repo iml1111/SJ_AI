@@ -20,18 +20,23 @@ from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis.gensim
 import warnings
 from tknizer import get_tk
-import platform
-
+import platfor
 warnings.filterwarnings('ignore')
-# HyperParameter
-#총 토픽 수
-NUM_TOPICS = 45
-# 많을수록 곱씹어서 봄
-PASSES = 20
-# 학습에 포함될 최소 글자수
-EVERY_POST_LIMIT = 30
+
 # 학습을 수행할 병렬 워커 수
 WORKERS = 4
+#### HyperParameter
+#총 토픽 수
+NUM_TOPICS = 5
+# 많을수록 곱씹어서 봄
+PASSES = 20
+# 학습에 포함될 최소 글자수(에브리타임)
+EVERY_POST_LIMIT = 30
+#나머지 최소 글자수 제한
+TOTAL_POST_LIMIT = 10
+#모델 이터레이션 횟수
+ITERATION = 100 
+
 
 #환경에 따라 변경 필요
 os_platform = platform.platform()
@@ -75,13 +80,14 @@ def learn(corpus, dictionary, num_topics = NUM_TOPICS, update = False):
 				num_topics = num_topics,
 				id2word = dictionary,
 				passes = PASSES,
-				workers = WORKERS
+				workers = WORKERS,
+				iterations = ITERATION
 				)
 	cm = CoherenceModel(model=ldamodel, corpus=corpus, coherence='u_mass')
 	coherence = cm.get_coherence()
 	perplexity = ldamodel.log_perplexity(corpus)
 	print("Cpherence",coherence)
-	print('\nPerplexity: ', perplexity)
+	print('Perplexity: ', perplexity)
 	return ldamodel, coherence, perplexity
 	#perplex가 낮을수록, coherence가 높을수록 좋음
 	#https://coredottoday.github.io/2018/09/17/%EB%AA%A8%EB%8D%B8-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0-%ED%8A%9C%EB%8B%9D/
@@ -95,8 +101,16 @@ def get_posts_df(coll, start, count, update = False):
 		posts = coll.find().skip(start).limit(count)
 	df = pd.DataFrame(columns = ["text"])
 	for post in posts:
+		# 코퍼스 전처리 조건
 		if post['info'].startswith("everytime") and len(post['post']) < EVERY_POST_LIMIT:
 			continue
+		if len(post['title'] + post['post']) < TOTAL_POST_LIMIT:
+			continue
+		if post['info'] in ["everytime_은밀한","main_bidding","everytime_끝말잇기 ", "everytime_퀴어 ","everytime_애니덕후 "]:
+			continue
+		if coll.find({"info":{"regex":post['info']}}).count < 500:
+			continue
+		#
 		token = post['token'] + post['tag']
 		temp = pd.DataFrame({"text":[token]})
 		df = df.append(temp, ignore_index = True)
@@ -113,7 +127,7 @@ def save_model(ldamodel, dictionary, model_path = model_path, dict_path = dict_p
 # 모델 활용 UTIL 함수
 
 ## 모델 불러오기
-def load_model():
+def load_model(model_path = model_path, dict_path = dict_path):
 	dictionary = corpora.Dictionary.load(model_path)
 	lda = LdaModel.load(datapath(model_path))
 	print("loaded")
