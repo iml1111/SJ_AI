@@ -19,19 +19,21 @@ from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis.gensim
 import warnings
-from tknizer import get_tk
-import platfor
+#from tknizer import get_tk
+import platform
 warnings.filterwarnings('ignore')
 
 # 학습을 수행할 병렬 워커 수
 WORKERS = 4
 #### HyperParameter
-#총 토픽 수
-NUM_TOPICS = 5
+#총 토픽 수 
+NUM_TOPICS = 30
 # 많을수록 곱씹어서 봄
 PASSES = 20
 # 학습에 포함될 최소 글자수(에브리타임)
-EVERY_POST_LIMIT = 30
+EVERY_POST_LIMIT = 35
+#네이버 카페 최소 제목수
+NAVER_TITLE_LIMIT = 15
 #나머지 최소 글자수 제한
 TOTAL_POST_LIMIT = 10
 #모델 이터레이션 횟수
@@ -86,8 +88,6 @@ def learn(corpus, dictionary, num_topics = NUM_TOPICS, update = False):
 	cm = CoherenceModel(model=ldamodel, corpus=corpus, coherence='u_mass')
 	coherence = cm.get_coherence()
 	perplexity = ldamodel.log_perplexity(corpus)
-	print("Cpherence",coherence)
-	print('Perplexity: ', perplexity)
 	return ldamodel, coherence, perplexity
 	#perplex가 낮을수록, coherence가 높을수록 좋음
 	#https://coredottoday.github.io/2018/09/17/%EB%AA%A8%EB%8D%B8-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0-%ED%8A%9C%EB%8B%9D/
@@ -104,11 +104,13 @@ def get_posts_df(coll, start, count, update = False):
 		# 코퍼스 전처리 조건
 		if post['info'].startswith("everytime") and len(post['post']) < EVERY_POST_LIMIT:
 			continue
+		if post['info'].startswith("navercafe") and len(post['title']) < NAVER_TITLE_LIMIT:
+			continue
 		if len(post['title'] + post['post']) < TOTAL_POST_LIMIT:
 			continue
 		if post['info'] in ["everytime_은밀한","main_bidding","everytime_끝말잇기 ", "everytime_퀴어 ","everytime_애니덕후 "]:
 			continue
-		if coll.find({"info":{"regex":post['info']}}).count < 500:
+		if post['info'].startswith("everytime") and coll.find({"info":post['info']}).count < 500:
 			continue
 		#
 		token = post['token'] + post['tag']
@@ -183,7 +185,8 @@ def get_time():
 
 ###################################################################
 # 테스트용 함수
-
+# 1. 태그 토큰을 두배로 늘리기
+# 2. 에브리타임에 있는 모든 기타 게시판 토픽에서 제외하기
 
 
 
