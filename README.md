@@ -1,2 +1,2 @@
-# SJ_LDA
- LDA Learning Model for SOOJLE
+# SJ_AI
+ AI Model for SOOJLE
