@@ -37,7 +37,7 @@ NAVER_TITLE_LIMIT = 15
 #나머지 최소 글자수 제한
 TOTAL_POST_LIMIT = 10
 #모델 이터레이션 횟수
-ITERATION = 100 
+ITERATION = 50 
 
 
 #환경에 따라 변경 필요
@@ -71,6 +71,8 @@ def make_corpus(col, start = 0, count = None, split_doc = 1, update = False):
 		dictionary.add_documents(tokenized_doc)
 		corpus += [dictionary.doc2bow(text) for text in tokenized_doc]
 		idx += split_doc
+		sys.stdout.write("\033[F")
+	print("Total Corpus:", len(corpus))
 	return corpus, dictionary
 
 
@@ -110,23 +112,23 @@ def get_posts_df(coll, start, count, update = False):
 			continue
 		if post['info'] in ["everytime_은밀한","main_bidding","everytime_끝말잇기 ", "everytime_퀴어 ","everytime_애니덕후 "]:
 			continue
-		if post['info'].startswith("everytime") and coll.find({"info":post['info']}).count < 500:
+		if post['info'].startswith("everytime") and coll.find({"info":post['info']}).count() < 500:
 			continue
 		#
 		token = post['token'] + post['tag']
 		temp = pd.DataFrame({"text":[token]})
 		df = df.append(temp, ignore_index = True)
-		#print("OK")
+	#print("ADD_OK:", len(df))
 	return df
+
+############################################
+#UTIL 함수
 
 # 모델 저장하기
 def save_model(ldamodel, dictionary, model_path = model_path, dict_path = dict_path):
 	ldamodel.save(datepath(model_path))
 	dictionary.save(dict_path)
 	print("model saved")
-
-############################################
-# 모델 활용 UTIL 함수
 
 ## 모델 불러오기
 def load_model(model_path = model_path, dict_path = dict_path):
@@ -171,22 +173,16 @@ def is_vaild_words(dict, word_list):
 	return result
 
 ## 모델 시각화
-def visualization(ldamodel, corpus, dictionary):
+def visualization(ldamodel, corpus, dictionary, name = ""):
 	print("graphing...")
 	vis = pyLDAvis.gensim.prepare(ldamodel, corpus, dictionary)
 	print("downloading...")
-	pyLDAvis.save_html(vis,"gensim_output.html")
-	print("displaying...")
-	pyLDAvis.show(vis)
+	pyLDAvis.save_html(vis, name + "gensim_output.html")
+	#print("displaying...")
+	#pyLDAvis.show(vis)
 
 def get_time():
 	print("WorkingTime: {} sec".format(round(time.time()-start,3)))
-
-
-###################################################################
-# 테스트용 함수
-# 1. 태그 토큰을 두배로 늘리기
-# 2. 에브리타임에 있는 모든 기타 게시판 토픽에서 제외하기
 
 
 
