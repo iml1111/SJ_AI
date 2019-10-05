@@ -17,7 +17,7 @@ import platform
 #환경에 따라 변경 필요
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
-	model_path = os.getcwd() + "\\ft_output\\soojle_ft_model"
+	model_path = "./soojle_ft_model"
 else:
 	model_path = "/home/iml/model/ft_output/soojle_ft_model"
 
@@ -89,11 +89,11 @@ def learn(corpus, update = False):
 # UTIL 함수
 
 # 모델 저장
-def model_save(model, path):
+def model_save(model, path = model_path):
 	model.save(path)
 
 # 모델 로드
-def model_load(path):
+def model_load(path = model_path):
 	return FastText.load(path)
 
 # 해당 토큰들과 가장 유사한 단어들 뽑기(10개)
