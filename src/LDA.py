@@ -91,8 +91,6 @@ def learn(corpus, dictionary, num_topics = NUM_TOPICS, update = False):
 	coherence = cm.get_coherence()
 	perplexity = ldamodel.log_perplexity(corpus)
 	return ldamodel, coherence, perplexity
-	#perplex가 낮을수록, coherence가 높을수록 좋음
-	#https://coredottoday.github.io/2018/09/17/%EB%AA%A8%EB%8D%B8-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0-%ED%8A%9C%EB%8B%9D/
 
 
 ## 특정 수만큼 포스트 가져오기
@@ -110,7 +108,8 @@ def get_posts_df(coll, start, count, update = False):
 			continue
 		if len(post['title'] + post['post']) < TOTAL_POST_LIMIT:
 			continue
-		if post['info'] in ["everytime_은밀한","main_bidding","everytime_끝말잇기 ", "everytime_퀴어 ","everytime_애니덕후 "]:
+		if post['info'] in ["everytime_은밀한","main_bidding","everytime_끝말잇기 ", 
+							"everytime_퀴어 ","everytime_애니덕후 "]:
 			continue
 		if post['info'].startswith("everytime") and coll.find({"info":post['info']}).count() < 500:
 			continue
