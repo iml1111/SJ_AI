@@ -77,15 +77,15 @@ def make_corpus(col, start = 0, count = None, split_doc = 1, update = False):
 
 
 ## 코퍼스를 통해 학습 수행
-def learn(corpus, dictionary, num_topics = NUM_TOPICS, update = False):
+def learn(corpus, dictionary, num_topics = NUM_TOPICS, passes = PASSES, iterations = ITERATION, update = False):
 	print("Training...")
 	ldamodel = LdaMulticore(
 				corpus,
 				num_topics = num_topics,
 				id2word = dictionary,
-				passes = PASSES,
+				passes = passes,
 				workers = WORKERS,
-				iterations = ITERATION
+				iterations = iterations
 				)
 	cm = CoherenceModel(model=ldamodel, corpus=corpus, coherence='u_mass')
 	coherence = cm.get_coherence()
