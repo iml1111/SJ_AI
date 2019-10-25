@@ -27,9 +27,9 @@ warnings.filterwarnings('ignore')
 WORKERS = 4
 #### HyperParameter
 #총 토픽 수 
-NUM_TOPICS = 30
+NUM_TOPICS = 25
 # 많을수록 곱씹어서 봄
-PASSES = 20
+PASSES = 250
 # 학습에 포함될 최소 글자수(에브리타임)
 EVERY_POST_LIMIT = 35
 #네이버 카페 최소 제목수
@@ -37,7 +37,7 @@ NAVER_TITLE_LIMIT = 15
 #나머지 최소 글자수 제한
 TOTAL_POST_LIMIT = 10
 #모델 이터레이션 횟수
-ITERATION = 50 
+ITERATION = 100 
 
 
 #환경에 따라 변경 필요
@@ -62,7 +62,6 @@ def make_corpus(col, start = 0, count = None, split_doc = 1, update = False):
 		print("Model Updating Start...")
 	else:
 		print("Model Learning Start...")
-		print("Topics(", NUM_TOPICS,"개)")
 		print("Docs (", NUM_DOCS - idx, "개)")
 	while(idx <= NUM_DOCS):
 		print("##",idx,"~",idx + split_doc - 1,"docs")
