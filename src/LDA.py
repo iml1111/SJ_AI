@@ -86,7 +86,7 @@ def get_topics(ldamodel, dictionary, doc):
 		return temp
 
 ## 해당 단어리스트가 딕셔너리에 내에 포함된 단어인지 검증
-def is_vaild_words(dict, word_list):
+def is_valid_words(dict, word_list):
 	temp = dict.doc2idx(word_list)
 	result = []
 	for i in temp:
