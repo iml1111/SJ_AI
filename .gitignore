@@ -3,7 +3,7 @@
 *.gz
 src/main.py
 src/lda_output/
-src/ft_wiki/
+src/ft_output/
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

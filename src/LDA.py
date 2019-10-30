@@ -21,25 +21,14 @@ import warnings
 from tknizer import get_tk
 import platform
 warnings.filterwarnings('ignore')
-
-# 학습을 수행할 병렬 워커 수
-WORKERS = 4
 #### HyperParameter
-#총 토픽 수 
+WORKERS = 4
 NUM_TOPICS = 25
-# 많을수록 곱씹어서 봄
 PASSES = 250
-# 학습에 포함될 최소 글자수(에브리타임)
 EVERY_POST_LIMIT = 35
-#네이버 카페 최소 제목수
 NAVER_TITLE_LIMIT = 15
-#나머지 최소 글자수 제한
 TOTAL_POST_LIMIT = 10
-#모델 이터레이션 횟수
 ITERATION = 100 
-
-
-#환경에 따라 변경 필요
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
 	model_path = os.getcwd() + "\\lda_output\\soojle_lda_model"
@@ -47,7 +36,8 @@ if os_platform.startswith("Windows"):
 else:
 	model_path = "/home/iml/model/lda/soojle_lda_model"
 	dict_path = "/home/iml/model/lda/soojle_lda_dict"
-
+default_dict = corpora.Dictionary.load(dict_path)
+default_lda = gensim.models.ldamodel.LdaModel.load(datapath(model_path))
 ############################################
 #UTIL 함수
 
@@ -65,17 +55,17 @@ def load_model(model_path = model_path, dict_path = dict_path):
 	return lda, dictionary
 
 ## 모델의 모든 토픽 정보 출력
-def show_topics(ldamodel, num_words = 5):
+def show_topics(ldamodel = default_lda, num_words = 5):
 	topics = ldamodel.print_topics(
+		num_topics = -1,
 		num_words = num_words) # 토픽 단어 제한
 	#토픽 및 토픽에 대한 단어의 기여도
-	print("모델 로드 테스트")
 	for topic in topics:
 		print(topic)
 	return topics
 
 ## 하나의 문서에 대하여 토픽 정보 예측
-def get_topics(ldamodel, dictionary, doc):
+def get_topics(doc, ldamodel = default_lda, dictionary = default_dict):
 	df = pd.DataFrame({'text':[doc]})
 	if str(type(doc)) == "<class 'list'>": tokenized_doc = df['text']
 	else: tokenized_doc = df['text'].apply(lambda x: get_tk(x))
@@ -86,7 +76,7 @@ def get_topics(ldamodel, dictionary, doc):
 		return temp
 
 ## 해당 단어리스트가 딕셔너리에 내에 포함된 단어인지 검증
-def is_valid_words(dict, word_list):
+def is_valid_words(word_list, dict = default_dict):
 	temp = dict.doc2idx(word_list)
 	result = []
 	for i in temp:
