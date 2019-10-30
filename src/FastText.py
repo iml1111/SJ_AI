@@ -4,8 +4,8 @@ sys.path.insert(0,'/home/iml/SOOJLE/')
 sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
 sys.path.insert(0,'/home/iml/SJ_Auth')
 sys.path.insert(0,'/home/iml/SJ_AI/src')
-sys.path.insert(0,'/home/iml/IML_Toknizer/src/')
-sys.path.insert(0,'../../IML_Toknizer/src/')
+sys.path.insert(0,'/home/iml/IML_Tokenizer/src/')
+sys.path.insert(0,'../../IML_Tokenizer/src/')
 from gensim.models.fasttext import load_facebook_model
 from gensim.models import FastText
 from gensim.test.utils import datapath
@@ -94,7 +94,7 @@ def get_posts_list(coll, start, count, update = False):
 		result.append(temp)
 	return result
 
-def learn(corpus, update = False, model):
+def learn(model, corpus, update = False):
 	print("Training...")
 	if update:
 		model.build_vocab(corpus, update = update)
