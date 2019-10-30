@@ -60,8 +60,7 @@ def show_topics(ldamodel = default_lda, num_words = 5):
 		num_topics = -1,
 		num_words = num_words) # 토픽 단어 제한
 	#토픽 및 토픽에 대한 단어의 기여도
-	for topic in topics:
-		print(topic)
+	for topic in topics: print(topic)
 	return topics
 
 ## 하나의 문서에 대하여 토픽 정보 예측
@@ -114,28 +113,30 @@ def make_corpus(col, start = 0, count = None, split_doc = 1, update = False):
 	print("Total Corpus:", len(corpus))
 	return corpus, dictionary
 
-
 ## 코퍼스를 통해 학습 수행
-def learn(corpus, dictionary, num_topics = NUM_TOPICS, passes = PASSES, iterations = ITERATION, update = False):
+def learn(corpus, dictionary, num_topics = NUM_TOPICS, passes = PASSES, iterations = ITERATION, update = False, ldamodel = None):
 	print("Training...")
-	ldamodel = LdaMulticore(
-				corpus,
-				num_topics = num_topics,
-				id2word = dictionary,
-				passes = passes,
-				workers = WORKERS,
-				iterations = iterations
-				)
-	cm = CoherenceModel(model=ldamodel, corpus=corpus, coherence='u_mass')
-	coherence = cm.get_coherence()
-	perplexity = ldamodel.log_perplexity(corpus)
+	if update:
+		ldamodel.update(corpus)
+	else:
+		ldamodel = LdaMulticore(
+					corpus,
+					num_topics = num_topics,
+					id2word = dictionary,
+					passes = passes,
+					workers = WORKERS,
+					iterations = iterations
+					)
+		cm = CoherenceModel(model=ldamodel, corpus=corpus, coherence='u_mass')
+		coherence = cm.get_coherence()
+		perplexity = ldamodel.log_perplexity(corpus)
 	return ldamodel, coherence, perplexity
 
 
 ## 특정 수만큼 포스트 가져오기
 def get_posts_df(coll, start, count, update = False):
 	if update:
-		posts = coll.find({{"learn" : 0}}).skip(start).limit(count)
+		posts = coll.find({{"lda_learn" : 0}}).skip(start).limit(count)
 	else:
 		posts = coll.find().skip(start).limit(count)
 	df = pd.DataFrame(columns = ["text"])
@@ -152,11 +153,10 @@ def get_posts_df(coll, start, count, update = False):
 			continue
 		if post['info'].startswith("everytime") and coll.find({"info":post['info']}).count() < 500:
 			continue
-		#
 		token = post['token'] + post['tag']
 		temp = pd.DataFrame({"text":[token]})
+		if update: coll.update_one({'_id':post['_id']}, {"lda_learn":1})	
 		df = df.append(temp, ignore_index = True)
-	#print("ADD_OK:", len(df))
 	return df
 
 ## 모델 시각화
