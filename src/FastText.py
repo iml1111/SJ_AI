@@ -17,7 +17,7 @@ if os_platform.startswith("Windows"):
 	model_path = "./ft_output/soojle_ft_model"
 else:
 	model_path = "/home/iml/model/ft/soojle_ft_model"
-try: default_ft = corpora.Dictionary.load(dict_path)
+try: default_ft = FastText.load(model_path)
 except: default_ft = None
 #### HyperParameter
 # 벡터 차원 수
@@ -44,9 +44,9 @@ def model_load(path = model_path):
 def sim_words(words, model = default_ft):
 	return model.wv.most_similar(words)
 
-# 두 단어 사이의 유사도 측정
-def similarity(A_word, B_word, model = default_ft):
-	 model.wv.similarity(A_word, B_word)
+# 두 단어 리스트 사이의 유사도 측정
+def similarity(doc_A, doc_B, model = default_ft):
+	return model.wv.n_similarity(doc_A, doc_B)
 
 # 딕셔너리에 존재하는 단어인지 식별
 def is_valid_words(model, word_list):
