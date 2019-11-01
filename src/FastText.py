@@ -14,10 +14,11 @@ import platform
 from tknizer import get_tk
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
-	model_path = "./soojle_ft_model"
+	model_path = "./ft_output/soojle_ft_model"
 else:
 	model_path = "/home/iml/model/ft/soojle_ft_model"
-
+try: default_ft = corpora.Dictionary.load(dict_path)
+except: default_ft = None
 #### HyperParameter
 # 벡터 차원 수
 VEC_SIZE = 30
@@ -39,16 +40,13 @@ def model_save(model, path = model_path):
 def model_load(path = model_path):
 	return FastText.load(path)
 
-# 해당 토큰들과 가장 유사한 단어들 뽑기(10개)
-## >>> model.wv.most_similar(["오버워치", "겐지"])
-# [('맥크리', 0.5675587058067322), ('정크랫', 0.5659589171409607), ('팟지', 0.5467239618301392), ('오버워
-# 치의', 0.5388162136077881), ('POTG', 0.5294703841209412), ('시메트라', 0.5286500453948975),
+# 해당 단어 or 단어 리스트와 가장 유사한 단어들 추출
+def sim_words(words, model = default_ft):
+	return model.wv.most_similar(words)
 
-# 토큰 2개 사이의 유사도 측정
-## >>> model.wv.similarity('문재인', '이명박')
-# 0.52090985
-## >>> model.wv.similarity('문재인', '신희재')
-# 0.20399559
+# 두 단어 사이의 유사도 측정
+def similarity(A_word, B_word, model = default_ft):
+	 model.wv.similarity(A_word, B_word)
 
 # 딕셔너리에 존재하는 단어인지 식별
 def is_valid_words(model, word_list):

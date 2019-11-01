@@ -23,8 +23,8 @@ import platform
 warnings.filterwarnings('ignore')
 #### HyperParameter
 WORKERS = 4
-NUM_TOPICS = 25
-PASSES = 250
+NUM_TOPICS = 26
+PASSES = 30
 EVERY_POST_LIMIT = 35
 NAVER_TITLE_LIMIT = 15
 TOTAL_POST_LIMIT = 10
@@ -36,14 +36,18 @@ if os_platform.startswith("Windows"):
 else:
 	model_path = "/home/iml/model/lda/soojle_lda_model"
 	dict_path = "/home/iml/model/lda/soojle_lda_dict"
-default_dict = corpora.Dictionary.load(dict_path)
-default_lda = gensim.models.ldamodel.LdaModel.load(datapath(model_path))
+try:
+	default_dict = corpora.Dictionary.load(dict_path)
+	default_lda = gensim.models.ldamodel.LdaModel.load(datapath(model_path))
+except:
+	default_dict = None
+	default_lda = None
 ############################################
 #UTIL 함수
 
 # 모델 저장하기
-def save_model(ldamodel, dictionary, model_path = model_path, dict_path = dict_path):
-	ldamodel.save(datapath(model_path))
+def save_model(model, dictionary, model_path = model_path, dict_path = dict_path):
+	model.save(datapath(model_path))
 	dictionary.save(dict_path)
 	print("model saved")
 
@@ -55,8 +59,8 @@ def load_model(model_path = model_path, dict_path = dict_path):
 	return lda, dictionary
 
 ## 모델의 모든 토픽 정보 출력
-def show_topics(ldamodel = default_lda, num_words = 5):
-	topics = ldamodel.print_topics(
+def show_topics(model = default_lda, num_words = 5):
+	topics = model.print_topics(
 		num_topics = -1,
 		num_words = num_words) # 토픽 단어 제한
 	#토픽 및 토픽에 대한 단어의 기여도
@@ -64,12 +68,12 @@ def show_topics(ldamodel = default_lda, num_words = 5):
 	return topics
 
 ## 하나의 문서에 대하여 토픽 정보 예측
-def get_topics(doc, ldamodel = default_lda, dictionary = default_dict):
+def get_topics(doc, model = default_lda, dictionary = default_dict):
 	df = pd.DataFrame({'text':[doc]})
 	if str(type(doc)) == "<class 'list'>": tokenized_doc = df['text']
 	else: tokenized_doc = df['text'].apply(lambda x: get_tk(x))
 	corpus = [dictionary.doc2bow(text) for text in tokenized_doc]	
-	for topic_list in ldamodel[corpus]:
+	for topic_list in model[corpus]:
 		temp = topic_list
 		temp = sorted(topic_list, key = lambda x: (x[1]), reverse=True)
 		return temp
@@ -79,10 +83,8 @@ def is_valid_words(word_list, dict = default_dict):
 	temp = dict.doc2idx(word_list)
 	result = []
 	for i in temp:
-		if i == -1:
-			result += [False]
-		else:
-			result += [True]
+		if i == -1: result += [False]
+		else: result += [True]
 	return result
 
 #####################################################################
