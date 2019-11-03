@@ -76,7 +76,10 @@ def get_topics(doc, model = default_lda, dictionary = default_dict):
 	for topic_list in model[corpus]:
 		temp = topic_list
 		temp = sorted(topic_list, key = lambda x: (x[1]), reverse=True)
-		return temp
+		break
+	result = np.zeros(NUM_TOPICS)	
+	for idx, data in temp: result[idx] += data 
+	return result
 
 ## 해당 단어리스트가 딕셔너리에 내에 포함된 단어인지 검증
 def is_valid_words(word_list, dict = default_dict):

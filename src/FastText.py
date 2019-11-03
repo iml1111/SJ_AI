@@ -92,15 +92,15 @@ def get_posts_list(coll, start, count, update = False):
 		result.append(temp)
 	return result
 
-def learn(model, corpus, update = False):
+def learn(corpus, update = False, model = None, vec_size = VEC_SIZE, windows = WINDOWS, min_count = MIN_COUNT, iteration = ITERATION):
 	print("Training...")
 	if update:
 		model.build_vocab(corpus, update = update)
 		model.train(corpus, total_examples = len(corpus), epochs = model.epochs)
 	else:
-		model = FastText(size = VEC_SIZE,
-						window = WINDOWS,
-						min_count = MIN_COUNT,
+		model = FastText(size = vec_size,
+						window = windows,
+						min_count = min_count,
 						sentences = corpus,
-						iter = ITERATION)
+						iter = iteration)
 	return model
