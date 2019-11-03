@@ -60,7 +60,7 @@ def get_doc_vector(doc, model = default_ft):
 	return matutils.unitvec(np.array(v).mean(axis=0))
 
 # 딕셔너리에 존재하는 단어인지 식별
-def is_valid_words(model, word_list):
+def is_valid_words(word_list, model = default_ft):
 	result = []
 	for i in word_list:
 		result += [i in model.wv.vocab]
