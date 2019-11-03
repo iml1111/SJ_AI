@@ -9,6 +9,8 @@ sys.path.insert(0,'../../IML_Tokenizer/src/')
 from gensim.models.fasttext import load_facebook_model
 from gensim.models import FastText
 from gensim.test.utils import datapath
+from gensim import utils, matutils
+import numpy as np
 import os
 import platform
 from tknizer import get_tk
@@ -45,8 +47,17 @@ def sim_words(words, model = default_ft):
 	return model.wv.most_similar(words)
 
 # 두 단어 리스트 사이의 유사도 측정
-def similarity(doc_A, doc_B, model = default_ft):
+def doc_sim(doc_A, doc_B, model = default_ft):
 	return model.wv.n_similarity(doc_A, doc_B)
+
+#두 벡터 간의 유사도 측정
+def vec_sim(vec_A, vec_B, model = default_ft):
+	return np.dot(vec_A, vec_B)
+
+#해당 단어 리스트의 벡터값 추출
+def get_doc_vector(doc, model = default_ft):
+	v = [model.wv[word] for word in doc]
+	return matutils.unitvec(np.array(v).mean(axis=0))
 
 # 딕셔너리에 존재하는 단어인지 식별
 def is_valid_words(model, word_list):
