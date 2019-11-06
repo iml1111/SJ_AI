@@ -13,7 +13,7 @@ from gensim import utils, matutils
 import numpy as np
 import os
 import platform
-from tknizer import get_tk
+from tknizer import *
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
 	model_path = "./ft_output/soojle_ft_model"
@@ -97,6 +97,7 @@ def get_posts_list(coll, start, count, update = False):
 	result = []
 	for post in posts:
 		temp =  post['token'] + post['tag']
+		#temp = post['token'] + soojle_tokenize(post['title'], post['post'], lazy_mode = True)
 		if(len(temp) < 3):
 			continue
 		if update: coll.update_one({'_id':post['_id']}, {"ft_learn":1})	
