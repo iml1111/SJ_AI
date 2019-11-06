@@ -27,7 +27,7 @@ VEC_SIZE = 30
 # 연관 지을 윈도우 사이즈
 WINDOWS = 10
 # 최소 등장 횟수로 제한
-MIN_COUNT = 50
+MIN_COUNT = 30
 #모델 에포크
 ITERATION = 1000
 
