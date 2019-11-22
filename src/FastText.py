@@ -13,6 +13,7 @@ from gensim import utils, matutils
 import numpy as np
 import os
 import platform
+import csv
 from tknizer import *
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
@@ -65,6 +66,23 @@ def is_valid_words(word_list, model = default_ft):
 	for i in word_list:
 		result += [i in model.wv.vocab]
 	return result
+
+def make_tsv(model = default_ft):
+	with open("ft_embed.tsv", 'w') as tsvfile:
+		writer = csv.writer(tsvfile, delimiter = '\t')
+		words = model.wv.vocab.keys()
+		for word in words:
+			vector = model.wv.get_vector(word).tolist()
+			row = [word] + vector
+			writer.writerow(row)
+	with open("ft_metadata.tsv", 'w') as tsvfile:
+		writer = csv.writer(tsvfile, delimiter = '\t')
+		#writer.writerow(["__index__"])
+		for word in words:
+			writer.writerow([word])
+
+
+
 
 ##################################
 # 학습 코드
