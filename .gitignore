@@ -4,6 +4,8 @@
 src/main.py
 src/lda_output/
 src/ft_output/
+src/ft_embed.tsv
+src/ft_metadata.tsv
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

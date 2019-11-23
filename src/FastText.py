@@ -22,6 +22,8 @@ else:
 	model_path = "/home/iml/model/ft/soojle_ft_model"
 try: default_ft = FastText.load(model_path)
 except: default_ft = None
+VEC_FILE_TSV = "ft_embed.tsv"
+META_FILE_TSV = "ft_metadata.tsv"
 #### HyperParameter
 # 벡터 차원 수
 VEC_SIZE = 30
@@ -31,6 +33,7 @@ WINDOWS = 10
 MIN_COUNT = 30
 #모델 에포크
 ITERATION = 1000
+
 
 #############################
 # UTIL 함수
@@ -67,22 +70,19 @@ def is_valid_words(word_list, model = default_ft):
 		result += [i in model.wv.vocab]
 	return result
 
-def make_tsv(model = default_ft):
-	with open("ft_embed.tsv", 'w') as tsvfile:
+def make_tsv(model = default_ft, 
+	vec_file_tsv = VEC_FILE_TSV, meta_file_tsv = META_FILE_TSV):
+	with open(vec_file_tsv, 'w',encoding='utf-8') as tsvfile:
 		writer = csv.writer(tsvfile, delimiter = '\t')
 		words = model.wv.vocab.keys()
 		for word in words:
 			vector = model.wv.get_vector(word).tolist()
-			row = [word] + vector
+			row = vector
 			writer.writerow(row)
-	with open("ft_metadata.tsv", 'w') as tsvfile:
+	with open(meta_file_tsv, 'w',encoding='utf-8') as tsvfile:
 		writer = csv.writer(tsvfile, delimiter = '\t')
-		#writer.writerow(["__index__"])
 		for word in words:
 			writer.writerow([word])
-
-
-
 
 ##################################
 # 학습 코드
