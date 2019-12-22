@@ -94,7 +94,7 @@ def is_valid_words(word_list, dict = default_dict):
 # 학습코드 
 
 ## DB 내의 데이터 모델 코퍼스로 만들기
-def make_corpus(col, start = 0, count = None, split_doc = 1, update = False):
+def make_corpus(col, start = 0, count = None, split_doc = 1000, update = False):
 	corpus = []
 	dictionary = corpora.Dictionary()
 	idx = 1 + start
