@@ -47,8 +47,8 @@ def model_load(path = model_path):
 	return FastText.load(path)
 
 # 해당 단어 or 단어 리스트와 가장 유사한 단어들 추출
-def sim_words(words, model = default_ft):
-	return model.wv.most_similar(words)
+def sim_words(words, num = 100, model = default_ft):
+	return model.wv.most_similar(words, topn = num)
 
 # 두 단어 리스트 사이의 유사도 측정
 def doc_sim(doc_A, doc_B, model = default_ft):
