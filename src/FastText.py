@@ -17,7 +17,7 @@ import csv
 from tknizer import *
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
-	model_path = "./ft_output/soojle_ft_model"
+	model_path = "../../SJ_AI/src/ft_output/soojle_ft_model"
 else:
 	model_path = "/home/iml/model/ft/soojle_ft_model"
 try: default_ft = FastText.load(model_path)
