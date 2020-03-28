@@ -13,7 +13,7 @@ def refac(id, pw, collection,  host = 'localhost:27017'):
 			sys.stdout.write("\033[F") 
 			print("##",idx,"docs")
 
-		topic_str = post["tag"] + post["token"]
+		topic_str = post['token'][len(post['title_token']):]
 		col.update_one(
 			{"_id":post["_id"]},
 			{"$set": {

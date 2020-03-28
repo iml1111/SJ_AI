@@ -10,6 +10,7 @@ from gensim.models.fasttext import load_facebook_model
 from gensim.models import FastText
 from gensim.test.utils import datapath
 from gensim import utils, matutils
+from gensim import corpora, models
 import numpy as np
 import os
 import platform
@@ -33,6 +34,8 @@ WINDOWS = 10
 MIN_COUNT = 30
 #모델 에포크
 ITERATION = 1000
+#병렬처리 워커수
+WORKERS = 4
 
 
 #############################
@@ -97,13 +100,16 @@ def make_corpus(col, start = 0, count = None, split_doc = 1000, update = False):
 		print("Model Updating Start...")
 	else:
 		print("Model Learning Start...")
-		print("Docs (", NUM_DOCS - idx, "개)")
+		print("Docs (", NUM_DOCS - idx, "개)\n")
 	while(idx <= NUM_DOCS):
 		print("##",idx,"~",idx + split_doc - 1,"docs")
 		temp = get_posts_list(col, idx, split_doc, update)
 		corpus += temp
 		idx += split_doc
 		sys.stdout.write("\033[F")
+	# # 코퍼스 TF-IDF 수식 적용
+	# tfidf = models.TfidfModel(corpus)
+	# corpus = tfidf[corpus]
 	return corpus
 
 ## 특정 수만큼 포스트 가져오기
@@ -114,15 +120,15 @@ def get_posts_list(coll, start, count, update = False):
 		posts = coll.find().skip(start).limit(count)
 	result = []
 	for post in posts:
-		temp =  post['token'] + post['tag']
-		#temp = post['token'] + soojle_tokenize(post['title'], post['post'], lazy_mode = True)
+		temp =  post['token'][len(post['title_token']):]
 		if(len(temp) < 3):
 			continue
 		if update: coll.update_one({'_id':post['_id']}, {"ft_learn":1})	
 		result.append(temp)
 	return result
 
-def learn(corpus, update = False, model = None, vec_size = VEC_SIZE, windows = WINDOWS, min_count = MIN_COUNT, iteration = ITERATION):
+def learn(corpus, update = False, model = None, vec_size = VEC_SIZE, windows = WINDOWS, min_count = MIN_COUNT, iteration = ITERATION,
+	workers = WORKERS):
 	print("Training...")
 	if update:
 		model.build_vocab(corpus, update = update)
@@ -132,5 +138,6 @@ def learn(corpus, update = False, model = None, vec_size = VEC_SIZE, windows = W
 						window = windows,
 						min_count = min_count,
 						sentences = corpus,
-						iter = iteration)
+						iter = iteration,
+						workers = workers)
 	return model

@@ -13,7 +13,7 @@ sys.path.insert(0,'/home/iml/SJ_AI/src')
 sys.path.insert(0,'/home/iml/IML_Tokenizer/src/')
 sys.path.insert(0,'../../IML_Tokenizer/src/')
 from gensim.test.utils import datapath
-from gensim import corpora
+from gensim import corpora, models
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis.gensim
@@ -23,12 +23,13 @@ import platform
 warnings.filterwarnings('ignore')
 #### HyperParameter
 WORKERS = 4
-NUM_TOPICS = 26
+NUM_TOPICS = 20
 PASSES = 30
 EVERY_POST_LIMIT = 35
 NAVER_TITLE_LIMIT = 15
 TOTAL_POST_LIMIT = 10
-ITERATION = 100 
+ITERATION = 100
+MIN_COUNT = 30
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
 	model_path = os.getcwd() + "\\lda_output\\soojle_lda_model"
@@ -44,7 +45,6 @@ except:
 	default_lda = None
 ############################################
 #UTIL 함수
-
 # 모델 저장하기
 def save_model(model, dictionary, model_path = model_path, dict_path = dict_path):
 	model.save(datapath(model_path))
@@ -94,7 +94,7 @@ def is_valid_words(word_list, dict = default_dict):
 # 학습코드 
 
 ## DB 내의 데이터 모델 코퍼스로 만들기
-def make_corpus(col, start = 0, count = None, split_doc = 1000, update = False):
+def make_corpus(col, start = 0, count = None, split_doc = 1000, update = False, tf_idf = True):
 	corpus = []
 	dictionary = corpora.Dictionary()
 	idx = 1 + start
@@ -112,14 +112,27 @@ def make_corpus(col, start = 0, count = None, split_doc = 1000, update = False):
 		df = get_posts_df(col, idx, split_doc, update)
 		tokenized_doc = df['text']
 		dictionary.add_documents(tokenized_doc)
-		corpus += [dictionary.doc2bow(text) for text in tokenized_doc]
+		corpus += list(tokenized_doc)
 		idx += split_doc
 		sys.stdout.write("\033[F")
-	print("Total Corpus:", len(corpus))
+	print("\nTotal Corpus:", len(corpus))
+	
+	# 등장 빈도수 및 길이로 딕셔너리 최종 필터링
+	dictionary.filter_extremes(no_below=MIN_COUNT)
+
+	# 딕셔너리 기반으로 모든 토큰을 정수로 인코딩
+	corpus = [dictionary.doc2bow(tokens) for tokens in corpus]
+
+	# 코퍼스 TF-IDF 수식 적용
+	if tf_idf:
+		tfidf = models.TfidfModel(corpus)
+		corpus = tfidf[corpus]
+
 	return corpus, dictionary
 
 ## 코퍼스를 통해 학습 수행
-def learn(corpus, dictionary, num_topics = NUM_TOPICS, passes = PASSES, iterations = ITERATION, update = False, ldamodel = None):
+def learn(corpus, dictionary, num_topics = NUM_TOPICS, passes = PASSES, 
+	iterations = ITERATION, update = False, ldamodel = None):
 	print("Training...")
 	if update:
 		ldamodel.update(corpus)
@@ -132,6 +145,7 @@ def learn(corpus, dictionary, num_topics = NUM_TOPICS, passes = PASSES, iteratio
 					workers = WORKERS,
 					iterations = iterations
 					)
+		print("Complete!")
 		cm = CoherenceModel(model=ldamodel, corpus=corpus, coherence='u_mass')
 		coherence = cm.get_coherence()
 		perplexity = ldamodel.log_perplexity(corpus)
@@ -153,12 +167,12 @@ def get_posts_df(coll, start, count, update = False):
 			continue
 		if len(post['title'] + post['post']) < TOTAL_POST_LIMIT:
 			continue
-		if post['info'] in ["everytime_은밀한","main_bidding","everytime_끝말잇기 ", 
-							"everytime_퀴어 ","everytime_애니덕후 "]:
-			continue
-		if post['info'].startswith("everytime") and coll.find({"info":post['info']}).count() < 500:
-			continue
-		token = post['token'] + post['tag']
+		# if post['info'] in ["everytime_은밀한","main_bidding","everytime_끝말잇기 ", 
+		# 					"everytime_퀴어 ","everytime_애니덕후 "]:
+		# 	continue
+		# if post['info'].startswith("everytime") and coll.find({"info":post['info']}).count() < 500:
+		# 	continue
+		token =  post['token'][len(post['title_token']):]
 		temp = pd.DataFrame({"text":[token]})
 		if update: coll.update_one({'_id':post['_id']}, {"lda_learn":1})	
 		df = df.append(temp, ignore_index = True)
