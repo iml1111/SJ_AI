@@ -18,22 +18,18 @@ def FTLearn():
 	FastText.model_save(model)
 	return model
 
-def LDALearn(tfidf, model_path, dict_path, vis_name = ""):
+def LDALearn(corpus, dictionary, num_topics, passes, iterations):
 	print("#----LDA----#")
-	corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000, tf_idf = tfidf)
-	ldamodel, cohorence, perflexity =  LDA.learn(corpus = corpus, dictionary = dictionary)
+	ldamodel, cohorence, perflexity =  LDA.learn(corpus = corpus, dictionary = dictionary, num_topics = num_topics)
 	print("cohorence:",cohorence)
 	print("perflexity:",perflexity)
-	
-	LDA.save_model(ldamodel, dictionary, model_path = model_path, dict_path = dict_path)
-	LDA.visualization(ldamodel, corpus, dictionary, name = vis_name)
+	LDA.save_model(ldamodel, dictionary)
+	LDA.visualization(ldamodel, corpus, dictionary)
 	return ldamodel, cohorence, perflexity, corpus, dictionary
 
-# ldamodel, cohorence, perflexity, corpus, dictionary = LDALearn(tfidf = False,model_path = os.getcwd() + "\\lda_output\\soojle_lda_model",dict_path = os.getcwd() + "\\lda_output\\soojle_lda_dict")
+# corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000)
 
-
-# ldamodel2, cohorence2, perflexity2, corpus2, dictionary2 = LDALearn(tfidf = True,model_path = os.getcwd() + "\\tfidf_lda_output\\soojle_lda_model",dict_path = os.getcwd() + "\\tfidf_lda_output\\soojle_lda_dict", vis_name = "tfidf")
-
+# a,b,c,d,e = LDALearn(corpus, dictionary, 20, 30, 50)
 
 # ftmodel = FTLearn()
 
@@ -55,5 +51,5 @@ def LDAtest(num_topic,corpus, dictionary):
 	f.close()
 	
 # corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000)
-# for i in range(10,31,5): LDAtest(i,corpus, dictionary)
+# for i in range(10,24,1): LDAtest(i,corpus, dictionary)
 	
