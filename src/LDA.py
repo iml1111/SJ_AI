@@ -25,9 +25,9 @@ warnings.filterwarnings('ignore')
 WORKERS = 4
 NUM_TOPICS = 20
 PASSES = 30
-EVERY_POST_LIMIT = 35
-NAVER_TITLE_LIMIT = 15
-TOTAL_POST_LIMIT = 10
+EVERY_POST_LIMIT = 20
+NAVER_TITLE_LIMIT = 5
+TOTAL_POST_LIMIT = 4
 ITERATION = 100
 MIN_COUNT = 30
 os_platform = platform.platform()
@@ -41,6 +41,7 @@ try:
 	default_dict = corpora.Dictionary.load(dict_path)
 	default_lda = gensim.models.ldamodel.LdaModel.load(datapath(model_path))
 except:
+	print("모델이 호출되지 않음")
 	default_dict = None
 	default_lda = None
 ############################################

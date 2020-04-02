@@ -23,13 +23,14 @@ def LDALearn(corpus, dictionary, num_topics, passes, iterations):
 	ldamodel, cohorence, perflexity =  LDA.learn(corpus = corpus, dictionary = dictionary, num_topics = num_topics)
 	print("cohorence:",cohorence)
 	print("perflexity:",perflexity)
+	#return ldamodel, corpus, dictionary
 	LDA.save_model(ldamodel, dictionary)
 	LDA.visualization(ldamodel, corpus, dictionary)
 	return ldamodel, cohorence, perflexity, corpus, dictionary
 
 # corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000)
 
-# a,b,c,d,e = LDALearn(corpus, dictionary, 20, 30, 50)
+# a,b,c,d,e = LDALearn(corpus, dictionary, 20, 30, 70)
 
 # ftmodel = FTLearn()
 
