@@ -16,6 +16,7 @@ def FTLearn():
 	corpus = FastText.make_corpus(col = col, split_doc = 1000)
 	model = FastText.learn(corpus)
 	FastText.model_save(model)
+	FastText.make_tsv(model)
 	return model
 
 def LDALearn(corpus, dictionary, num_topics, passes, iterations):
