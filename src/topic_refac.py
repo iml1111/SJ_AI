@@ -39,8 +39,6 @@ def refac(id, pw, collection,  host = 'localhost:27017'):
 							"tag":1,
 						}
 					)
-				item['post_date'] = item['date']
-				del item['date']
 				post.update(item)
 		col2.update({"user_id":user['user_id']},user)
 	client.close()
