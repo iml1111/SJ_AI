@@ -34,6 +34,7 @@ def refac(id, pw, collection,  host = 'localhost:27017'):
 			for post in user[i]:
 				item = col.find_one({"_id":ObjectId(post["_id"])},
 						{
+							"_id":0,
 							"topic":1,
 							"token":1,
 							"tag":1,
@@ -42,4 +43,3 @@ def refac(id, pw, collection,  host = 'localhost:27017'):
 				post.update(item)
 		col2.update({"user_id":user['user_id']},user)
 	client.close()
-
