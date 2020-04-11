@@ -7,11 +7,13 @@ import FastText
 import LDA
 import os
 
-client = MongoClient('mongodb://%s:%s@%s' % (ID, PW, HOST))
-db = client['soojle']
-col = db['Dump_posts']
+def connect(id, pw, host):
+	client = MongoClient('mongodb://%s:%s@%s' % (id, pw, host))
+	db = client['soojle']
+	col = db['Dump_posts']
+	return client, db, col
 
-def FTLearn():
+def FTLearn(col):
 	print("#----FastText----#")
 	corpus = FastText.make_corpus(col = col, split_doc = 1000)
 	model = FastText.learn(corpus)
@@ -19,8 +21,9 @@ def FTLearn():
 	FastText.make_tsv(model)
 	return model
 
-def LDALearn(corpus, dictionary, num_topics, passes, iterations):
+def LDALearn(col, num_topics, passes, iterations):
 	print("#----LDA----#")
+	corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000)
 	ldamodel, cohorence, perflexity =  LDA.learn(corpus = corpus, dictionary = dictionary, num_topics = num_topics)
 	print("cohorence:",cohorence)
 	print("perflexity:",perflexity)
@@ -29,13 +32,12 @@ def LDALearn(corpus, dictionary, num_topics, passes, iterations):
 	LDA.visualization(ldamodel, corpus, dictionary)
 	return ldamodel, cohorence, perflexity, corpus, dictionary
 
-# corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000)
 
+# client, db, col = connect(id, pw, host)
 # a,b,c,d,e = LDALearn(corpus, dictionary, 20, 30, 70)
-
 # ftmodel = FTLearn()
 
-
+# corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000)
 def LDAtest(num_topic,corpus, dictionary):
 	f = open("num_topic_test.txt","a")
 	f.write("#-----------------------------#\n")
