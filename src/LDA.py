@@ -17,10 +17,8 @@ from gensim import corpora, models
 from gensim.models.ldamulticore import LdaMulticore
 from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis.gensim
-import warnings
 from tknizer import get_tk
 import platform
-warnings.filterwarnings('ignore')
 #### HyperParameter
 WORKERS = 16
 NUM_TOPICS = 20

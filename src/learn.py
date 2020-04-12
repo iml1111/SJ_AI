@@ -33,7 +33,7 @@ def LDALearn(col, num_topics, passes, iterations):
 
 # client, db, col = connect(id, pw, host)
 # a,b,c,d,e = LDALearn(col, 20, 30, 70)
-# ftmodel = FTLearn()
+# ftmodel = FTLearn(col)
 
 # corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000)
 def LDAtest(num_topic,corpus, dictionary):
