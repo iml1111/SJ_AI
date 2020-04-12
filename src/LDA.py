@@ -188,8 +188,5 @@ def visualization(ldamodel, corpus, dictionary, name = ""):
 	#print("displaying...")
 	#pyLDAvis.show(vis)
 
-def get_time():
-	print("WorkingTime: {} sec".format(round(time.time()-start,3)))
-
 
 

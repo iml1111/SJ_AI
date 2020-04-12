@@ -1,11 +1,9 @@
 import sys
 sys.path.insert(0,'../../')
 sys.path.insert(0,'../../IML_tokenizer/src')
-from db_info import *
 from pymongo import MongoClient
 import FastText
 import LDA
-import os
 
 def connect(id, pw, host):
 	client = MongoClient('mongodb://%s:%s@%s' % (id, pw, host))
