@@ -6,13 +6,8 @@ sys.path.insert(0,'/home/iml/SJ_Auth')
 sys.path.insert(0,'/home/iml/SJ_AI/src')
 sys.path.insert(0,'/home/iml/IML_Tokenizer/src/')
 sys.path.insert(0,'../../IML_Tokenizer/src/')
-from gensim.models.fasttext import load_facebook_model
 from gensim.models import FastText
-from gensim.test.utils import datapath
-from gensim import utils, matutils
-from gensim import corpora, models
 import numpy as np
-import os
 import platform
 import csv
 from tknizer import *
