@@ -7,7 +7,7 @@ import LDA
 
 def connect(id, pw, host):
 	client = MongoClient('mongodb://%s:%s@%s' % (id, pw, host))
-	db = client['soojle']
+	db = client['soojle_loc']
 	col = db['Dump_posts']
 	return client, db, col
 
@@ -32,7 +32,7 @@ def LDALearn(col, num_topics, passes, iterations):
 
 
 # client, db, col = connect(id, pw, host)
-# a,b,c,d,e = LDALearn(corpus, dictionary, 20, 30, 70)
+# a,b,c,d,e = LDALearn(col, 20, 30, 70)
 # ftmodel = FTLearn()
 
 # corpus, dictionary = LDA.make_corpus(col = col, split_doc = 1000)
