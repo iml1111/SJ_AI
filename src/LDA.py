@@ -22,7 +22,7 @@ from tknizer import get_tk
 import platform
 warnings.filterwarnings('ignore')
 #### HyperParameter
-WORKERS = 4
+WORKERS = 16
 NUM_TOPICS = 20
 PASSES = 30
 EVERY_POST_LIMIT = 20
