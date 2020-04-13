@@ -13,10 +13,13 @@ import csv
 from tknizer import *
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
-	model_path = "../../SJ_AI/src/ft_output/soojle_ft_model"
+	save_path = "./ft_output/soojle_ft_model"
+	load_path = "./ft_output/soojle_ft_model"
 else:
-	model_path = "/home/ubuntu/soojle/SJ_AI/src/ft_output/soojle_ft_model"
-try: default_ft = FastText.load(model_path)
+	save_path = "./ft_output/soojle_ft_model"
+	load_path = "/home/iml/model/ft/soojle_ft_model"
+try: 
+	default_ft = FastText.load(load_path)
 except:
 	print("FT 모델이 호출되지 않음")
 	default_ft = None
@@ -39,11 +42,11 @@ WORKERS = 16
 # UTIL 함수
 
 # 모델 저장
-def model_save(model, path = model_path):
+def model_save(model, path = save_path):
 	model.save(path)
 
 # 모델 로드
-def model_load(path = model_path):
+def model_load(path = load_path):
 	return FastText.load(path)
 
 # 해당 단어 or 단어 리스트와 가장 유사한 단어들 추출

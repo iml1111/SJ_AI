@@ -28,14 +28,18 @@ ITERATION = 70
 MIN_COUNT = 30
 os_platform = platform.platform()
 if os_platform.startswith("Windows"):
-	model_path = os.getcwd() + "\\lda_output\\soojle_lda_model"
-	dict_path = os.getcwd() + "\\lda_output\\soojle_lda_dict"
+	save_model_path = os.getcwd() + "\\lda_output\\soojle_lda_model"
+	save_dict_path = os.getcwd() + "\\lda_output\\soojle_lda_dict"
+	load_model_path = os.getcwd() + "\\lda_output\\soojle_lda_model"
+	load_dict_path = os.getcwd() + "\\lda_output\\soojle_lda_dict"
 else:
-	model_path = "/home/ubuntu/soojle/SJ_AI/src/lda_output/soojle_lda_model"
-	dict_path = "/home/ubuntu/soojle/SJ_AI/src/lda_output/soojle_lda_dict"
+	save_model_path = "/home/ubuntu/soojle/SJ_AI/src/lda_output/soojle_lda_model"
+	save_dict_path = "/home/ubuntu/soojle/SJ_AI/src/lda_output/soojle_lda_dict"
+	load_model_path = "/home/iml/model/ft/lda/soojle_lda_model"
+	load_dict_path = "/home/iml/model/ft/lda/soojle_lda_dict"
 try:
-	default_dict = corpora.Dictionary.load(dict_path)
-	default_lda = gensim.models.ldamodel.LdaModel.load(datapath(model_path))
+	default_dict = corpora.Dictionary.load(load_dict_path)
+	default_lda = gensim.models.ldamodel.LdaModel.load(datapath(load_model_path))
 except:
 	print("LDA 모델이 호출되지 않음")
 	default_dict = None
@@ -43,13 +47,13 @@ except:
 ############################################
 #UTIL 함수
 # 모델 저장하기
-def save_model(model, dictionary, model_path = model_path, dict_path = dict_path):
+def save_model(model, dictionary, model_path = save_model_path, dict_path = save_dict_path):
 	model.save(datapath(model_path))
 	dictionary.save(dict_path)
 	print("model saved")
 
 ## 모델 불러오기
-def load_model(model_path = model_path, dict_path = dict_path):
+def load_model(model_path = load_model_path, dict_path = load_dict_path):
 	dictionary = corpora.Dictionary.load(dict_path)
 	lda = gensim.models.ldamodel.LdaModel.load(datapath(model_path))
 	print("loaded")
