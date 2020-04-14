@@ -19,11 +19,11 @@ from tknizer import get_tk
 import platform
 #### HyperParameter
 WORKERS = 4
-NUM_TOPICS = 20
+NUM_TOPICS = 30
 PASSES = 30
 EVERY_POST_LIMIT = 20
 NAVER_TITLE_LIMIT = 5
-TOTAL_POST_LIMIT = 4
+TOTAL_POST_LIMIT = 5
 ITERATION = 70
 MIN_COUNT = 30
 os_platform = platform.platform()
@@ -164,15 +164,10 @@ def get_posts_df(coll, start, count, update = False):
 		# 코퍼스 전처리 조건
 		if post['info'].startswith("everytime") and len(post['post']) < EVERY_POST_LIMIT:
 			continue
-		if post['info'].startswith("navercafe") and len(post['title']) < NAVER_TITLE_LIMIT:
-			continue
+		# if post['info'].startswith("navercafe") and len(post['title']) < NAVER_TITLE_LIMIT:
+		# 	continue
 		if len(post['title'] + post['post']) < TOTAL_POST_LIMIT:
 			continue
-		# if post['info'] in ["everytime_은밀한","main_bidding","everytime_끝말잇기 ", 
-		# 					"everytime_퀴어 ","everytime_애니덕후 "]:
-		# 	continue
-		# if post['info'].startswith("everytime") and coll.find({"info":post['info']}).count() < 500:
-		# 	continue
 		token =  post['token'][len(post['title_token']):]
 		temp = pd.DataFrame({"text":[token]})
 		if update: coll.update_one({'_id':post['_id']}, {"lda_learn":1})	
