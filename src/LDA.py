@@ -35,8 +35,8 @@ if os_platform.startswith("Windows"):
 else:
 	save_model_path = "/home/ubuntu/soojle/SJ_AI/src/lda_output/soojle_lda_model"
 	save_dict_path = "/home/ubuntu/soojle/SJ_AI/src/lda_output/soojle_lda_dict"
-	load_model_path = "/home/iml/model/ft/lda/soojle_lda_model"
-	load_dict_path = "/home/iml/model/ft/lda/soojle_lda_dict"
+	load_model_path = "/home/iml/model/lda/soojle_lda_model"
+	load_dict_path = "/home/iml/model/lda/soojle_lda_dict"
 try:
 	default_dict = corpora.Dictionary.load(load_dict_path)
 	default_lda = gensim.models.ldamodel.LdaModel.load(datapath(load_model_path))
