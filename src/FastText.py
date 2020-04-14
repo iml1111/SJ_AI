@@ -7,6 +7,7 @@ sys.path.insert(0,'/home/iml/SJ_AI/src')
 sys.path.insert(0,'/home/iml/IML_Tokenizer/src/')
 sys.path.insert(0,'../../IML_Tokenizer/src/')
 from gensim.models import FastText
+from gensim import utils, matutils
 import numpy as np
 import platform
 import csv
