@@ -19,11 +19,8 @@ if os_platform.startswith("Windows"):
 else:
 	save_path = "./ft_output/soojle_ft_model"
 	load_path = "/home/iml/model/ft/soojle_ft_model"
-try: 
-	default_ft = FastText.load(load_path)
-except:
-	print("FT 모델이 호출되지 않음")
-	default_ft = None
+default_ft = FastText.load(load_path)
+
 VEC_FILE_TSV = "ft_embed.tsv"
 META_FILE_TSV = "ft_metadata.tsv"
 #### HyperParameter
