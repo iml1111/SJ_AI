@@ -1,8 +1,8 @@
 import sys
 sys.path.insert(0,'/home/iml/')
-sys.path.insert(0,'/home/iml/SOOJLE/')
-sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
-sys.path.insert(0,'/home/iml/SJ_Auth')
+# sys.path.insert(0,'/home/iml/SOOJLE/')
+# sys.path.insert(0,'/home/iml/SOOJLE_Crawler/src/')
+# sys.path.insert(0,'/home/iml/SJ_Auth')
 sys.path.insert(0,'/home/iml/SJ_AI/src')
 sys.path.insert(0,'/home/iml/IML_Tokenizer/src/')
 sys.path.insert(0,'../../IML_Tokenizer/src/')
